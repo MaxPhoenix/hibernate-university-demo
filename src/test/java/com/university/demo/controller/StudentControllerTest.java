@@ -66,6 +66,7 @@ public class StudentControllerTest {
                 .andExpect(jsonPath("$[0].lastName", Matchers.is("Pratt")))
                 .andExpect(jsonPath("$[1].id", Matchers.is(2)))
                 .andExpect(jsonPath("$[1].lastName", Matchers.is("Edwards")));
+        
     }
 
 
