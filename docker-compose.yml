@@ -1,0 +1,33 @@
+version : "2"
+
+services:
+
+  spring-boot-university:
+    build: ./
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql-university
+    networks:
+      - university-backend-network
+
+
+  mysql-university:
+    build:
+      context: mysql-dockerfiles
+      dockerfile: Dockerfile
+    image: university-mysql
+    environment:
+      MYSQL_PASSWORD: 'root'
+      MYSQL_ROOT_PASSWORD: 'root'
+    volumes:
+      - university-mysql-data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    networks:
+      - university-backend-network
+volumes:
+  university-mysql-data:
+
+networks:
+  university-backend-network:
