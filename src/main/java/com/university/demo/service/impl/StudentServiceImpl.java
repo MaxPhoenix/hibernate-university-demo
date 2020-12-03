@@ -55,6 +55,8 @@ public class StudentServiceImpl implements StudentService {
             Student savedStudent = this.studentDAO.save(studentToSave);
             studentDTO = modelMapper.map(savedStudent, StudentDTO.class);
         }
+        else
+            throw new IllegalArgumentException("El estudiante debe existir para ser editado");
         return studentDTO;
     }
 
@@ -64,6 +66,8 @@ public class StudentServiceImpl implements StudentService {
         boolean exists = this.studentDAO.existsById(studentToDelete.getId());
         if(exists)
             this.studentDAO.delete(studentToDelete);
+        else
+            throw new IllegalArgumentException("El estudiante debe existir para ser eliminado");
         return studentDTO;
     }
 
