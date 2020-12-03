@@ -1,5 +1,6 @@
 package com.university.demo.dao;
 
+import com.university.demo.model.dto.StudentDTO;
 import com.university.demo.model.entity.Student;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.function.Supplier;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -22,7 +24,7 @@ public class StudentRepositoryEmbeddedTest {
     @Test
     @DisplayName("Save Student Test")
     void saveStudentTest(){
-        Student student = this.getStudentSave();
+        Student student = createFrom("Max", "Lencina", "mlencina@gmail.com", null);
         Student savedStudent = this.studentDAO.save(student);
         Assertions.assertThat(savedStudent).usingRecursiveComparison().ignoringFields("id").isEqualTo(student);
     }
@@ -30,35 +32,16 @@ public class StudentRepositoryEmbeddedTest {
     @Test
     @DisplayName("Get Student By Id Test")
     void getStudentByIdTest(){
-        Student student = this.getStudentSave();
+        Student student = createFrom("Max", "Lencina", "mlencina@gmail.com", null);
         Student savedStudent = this.studentDAO.save(student);
 
         Student retrievedStudent = this.studentDAO.findById(1).orElseThrow(() -> new EntityNotFoundException("Student not found"));
-        Student mockSavedStudent = this.getSavedMockStudent();
+        Student mockSavedStudent = createFrom("Max", "Lencina", "mlencina@gmail.com", 1);
         org.junit.jupiter.api.Assertions.assertAll(
                 () -> org.junit.jupiter.api.Assertions.assertEquals(retrievedStudent.getId(), Integer.valueOf(1)),
                 () -> org.junit.jupiter.api.Assertions.assertEquals(retrievedStudent, mockSavedStudent)
         );
     }
-
-    public Student getStudentSave(){
-        Student student = new Student();
-        student.setFirstName("Max");
-        student.setLastName("Lencina");
-        student.setEmail("mlencina@gmail.com");
-        return student;
-    }
-
-    public Student getSavedMockStudent(){
-        Student student = new Student();
-        student.setFirstName("Max");
-        student.setLastName("Lencina");
-        student.setEmail("mlencina@gmail.com");
-        student.setId(1);
-        return student;
-    }
-
-
 
     @Test
     @Sql("classpath:test-data.sql")
@@ -74,7 +57,71 @@ public class StudentRepositoryEmbeddedTest {
     @DisplayName("Is first student Max")
     void firstStudentShouldBeMax(){
         List<Student> students = this.studentDAO.findAll();
-        Assertions.assertThat(students.get(0)).isEqualTo(this.getSavedMockStudent());
+        Student mockSavedStudent = createFrom("Max", "Lencina", "mlencina@gmail.com", 1);
+        Assertions.assertThat(students.get(0)).isEqualTo(mockSavedStudent);
+    }
+
+    @Test
+    @Sql("classpath:test-data.sql")
+    @DisplayName("Should Get Students By 'Max' name From SQL File")
+    void shouldGetStudentsByMaxNameFromSqlFile(){
+        List<Student> students = this.studentDAO.findByFirstNameContainingOrLastNameContaining("Max", " ");
+        Assertions.assertThat(students).isNotEmpty();
+        Assertions.assertThat(students.size()).isEqualTo(1);
+    }
+
+
+    @Test
+    @Sql("classpath:test-data.sql")
+    @DisplayName("Should Get Students By 'Lencina' last name From SQL File")
+    void shouldGetStudentsByLencinaLastNameFromSqlFile(){
+        List<Student> students = this.studentDAO.findByFirstNameContainingOrLastNameContaining(" ", "Lencina");
+        Assertions.assertThat(students).isNotEmpty();
+        Assertions.assertThat(students.size()).isEqualTo(2);
+    }
+
+    @Test
+    @Sql("classpath:test-data.sql")
+    @DisplayName("Should Get Students By 'Max' First Name and 'Lencina' last name From SQL File")
+    void shouldGetStudentsByMaxFirstNameAndLencinaLastNameFromSqlFile(){
+        List<Student> students = this.studentDAO.findByFirstNameContainingOrLastNameContaining("Max", "Lencina");
+        Assertions.assertThat(students).isNotEmpty();
+        Assertions.assertThat(students.size()).isEqualTo(2);
+    }
+
+    @Test
+    @Sql("classpath:test-data.sql")
+    @DisplayName("Should Get Students Without First Name and last name From SQL File")
+    void shouldNotGetStudentsWithOutFirstAndLastNameFromSqlFile(){
+        List<Student> students = this.studentDAO.findByFirstNameContainingOrLastNameContaining(" ", " ");
+        Assertions.assertThat(students).isEmpty();
+    }
+
+    @Test
+    @Sql("classpath:test-data.sql")
+    @DisplayName("Should Edit Student with name 'Max'")
+    void shouldEditStudentWithNameMax(){
+        Student editedStudentMock = createFrom("Max", "Lencina", "maxlencina@gmail.com", 1);
+
+        Student student = this.studentDAO.findById(1).orElseThrow(() -> new EntityNotFoundException("Student not Found"));
+        student.setEmail("maxlencina@gmail.com");
+        student = this.studentDAO.save(student);
+
+        Assertions.assertThat(student).isEqualTo(editedStudentMock);
+
+        Student editedStudent = this.studentDAO.findAll().get(0);
+        Assertions.assertThat(editedStudent).isEqualTo(editedStudentMock);
+    }
+
+
+
+    private static Student createFrom(String firstName, String lastName, String email, Integer studentId){
+        Student student = new Student();
+        student.setFirstName(firstName);
+        student.setLastName(lastName);
+        student.setEmail(email);
+        student.setId(studentId);
+        return student;
     }
 
 }
