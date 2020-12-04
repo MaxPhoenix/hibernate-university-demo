@@ -56,6 +56,8 @@ public class InstructorServiceImpl implements InstructorService {
             Instructor savedStudent = this.instructorDAO.save(instructorToSave);
             instructorDTO = modelMapper.map(savedStudent, InstructorDTO.class);
         }
+        else
+            throw new IllegalArgumentException("El Instructor debe existir para ser editado.");
         return instructorDTO;
     }
 
@@ -65,6 +67,8 @@ public class InstructorServiceImpl implements InstructorService {
         boolean exists = this.instructorDAO.existsById(studentToDelete.getId());
         if(exists)
             this.instructorDAO.delete(studentToDelete);
+        else
+            throw new IllegalArgumentException("El Instructor debe existir para ser borrado.");
         return instructorDTO;
     }
 

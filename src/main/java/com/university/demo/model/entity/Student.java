@@ -48,4 +48,12 @@ public class Student extends BaseEntity {
     private List<Course> courses;
 
 
+    private void addCourse(Course course){
+        this.courses.add(course);
+    }
+
+    private void removeCourse(Course course){
+        this.courses.remove(course);
+    }
+
 }

@@ -27,4 +27,12 @@ public class StudentDTO extends BaseDTO {
     private List<Course> courses = new ArrayList<>();
 
 
+    public void addCourse(Course course){
+        this.courses.add(course);
+    }
+
+    public void removeCourse(Course course){
+        this.courses.remove(course);
+    }
+
 }

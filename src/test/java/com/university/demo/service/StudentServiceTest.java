@@ -7,20 +7,20 @@ import com.university.demo.model.entity.Instructor;
 import com.university.demo.model.entity.Student;
 import com.university.demo.service.base.StudentService;
 import com.university.demo.service.impl.StudentServiceImpl;
+import com.university.demo.utils.StudentTestUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import org.modelmapper.ModelMapper;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
 
 @ExtendWith(MockitoExtension.class)
 public class StudentServiceTest {
@@ -40,8 +40,8 @@ public class StudentServiceTest {
     @Test
     @DisplayName("Get Student by id test")
     void getStudentByIdTest(){
-        Student mockStudent = createStudentFrom("Max", "Lencina", "mlencina@gmail.com", 1);
-        StudentDTO mockStudentDTO = createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
+        Student mockStudent = StudentTestUtils.createStudentFrom("Max", "Lencina", "mlencina@gmail.com", 1);
+        StudentDTO mockStudentDTO = StudentTestUtils.createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
 
         Mockito.when(this.studentDAO.findById(1)).thenReturn(Optional.of(mockStudent));
         Mockito.when(this.modelMapper.map(mockStudent, StudentDTO.class)).thenReturn(mockStudentDTO);
@@ -53,11 +53,11 @@ public class StudentServiceTest {
     @Test
     @DisplayName("Save Student test ")
     void saveStudentTest(){
-        Student mockStudentToSave = createStudentFrom("Max", "Lencina", "mlencina@gmail.com", null);
-        StudentDTO mockStudentDtoToSave = createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", null);
+        Student mockStudentToSave = StudentTestUtils.createStudentFrom("Max", "Lencina", "mlencina@gmail.com", null);
+        StudentDTO mockStudentDtoToSave = StudentTestUtils.createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", null);
 
-        Student mockSavedStudent = createStudentFrom("Max", "Lencina", "mlencina@gmail.com", 1);
-        StudentDTO mockSavedStudentDTO = createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
+        Student mockSavedStudent = StudentTestUtils.createStudentFrom("Max", "Lencina", "mlencina@gmail.com", 1);
+        StudentDTO mockSavedStudentDTO = StudentTestUtils.createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
 
         Mockito.when(this.modelMapper.map(mockStudentDtoToSave, Student.class)).thenReturn(mockStudentToSave);
         Mockito.when(this.studentDAO.save(mockStudentToSave)).thenReturn(mockSavedStudent);
@@ -72,9 +72,9 @@ public class StudentServiceTest {
     @Test
     @DisplayName("Should edit Student test")
     void shouldEditStudentTest(){
-        Student mockStudent = createStudentFrom("Max", "Lencina", "maxlencina@gmail.com", 1);
-        StudentDTO editedMockStudentDTO = createStudentDTOFrom("Max", "Lencina", "maxlencina@gmail.com", 1);
-        StudentDTO mockStudentDTO = createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
+        Student mockStudent = StudentTestUtils.createStudentFrom("Max", "Lencina", "maxlencina@gmail.com", 1);
+        StudentDTO editedMockStudentDTO = StudentTestUtils.createStudentDTOFrom("Max", "Lencina", "maxlencina@gmail.com", 1);
+        StudentDTO mockStudentDTO = StudentTestUtils.createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
 
         mockStudentDTO.setEmail("maxlencina@gmail.com");
 
@@ -91,8 +91,8 @@ public class StudentServiceTest {
     @Test
     @DisplayName("Should not edit Student and throw IllegalArgumentException test")
     void shouldNotEditStudentTest(){
-        Student mockStudent = createStudentFrom("Max", "Lencina", "maxlencina@gmail.com", 1);
-        StudentDTO mockStudentDTO = createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
+        Student mockStudent = StudentTestUtils.createStudentFrom("Max", "Lencina", "maxlencina@gmail.com", 1);
+        StudentDTO mockStudentDTO = StudentTestUtils.createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
         mockStudentDTO.setEmail("maxlencina@gmail.com");
 
         Mockito.when(this.modelMapper.map(mockStudentDTO, Student.class)).thenReturn(mockStudent);
@@ -100,14 +100,13 @@ public class StudentServiceTest {
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> studentService.editStudent(mockStudentDTO));
         Mockito.verify(studentDAO, Mockito.times(0)).save(ArgumentMatchers.any(Student.class));
-
     }
 
     @Test
     @DisplayName("Should delete Student test")
     void shouldDeleteStudentTest(){
-        Student mockStudent = createStudentFrom("Max", "Lencina", "maxlencina@gmail.com", 1);
-        StudentDTO mockStudentDTO = createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
+        Student mockStudent = StudentTestUtils.createStudentFrom("Max", "Lencina", "maxlencina@gmail.com", 1);
+        StudentDTO mockStudentDTO = StudentTestUtils.createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
 
         Mockito.when(this.modelMapper.map(mockStudentDTO, Student.class)).thenReturn(mockStudent);
         Mockito.when(this.studentDAO.existsById(1)).thenReturn(true);
@@ -120,8 +119,8 @@ public class StudentServiceTest {
     @Test
     @DisplayName("Should not delete Student and throw IllegalArgumentException test")
     void shouldNOtDeleteStudentTest(){
-        Student mockStudent = createStudentFrom("Max", "Lencina", "maxlencina@gmail.com", 1);
-        StudentDTO mockStudentDTO = createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
+        Student mockStudent = StudentTestUtils.createStudentFrom("Max", "Lencina", "maxlencina@gmail.com", 1);
+        StudentDTO mockStudentDTO = StudentTestUtils.createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
 
         Mockito.when(this.modelMapper.map(mockStudentDTO, Student.class)).thenReturn(mockStudent);
         Mockito.when(this.studentDAO.existsById(1)).thenReturn(false);
@@ -133,10 +132,10 @@ public class StudentServiceTest {
     @Test
     @DisplayName("Get Students test")
     void getStudentsTest(){
-        Student mockStudent = createStudentFrom("Max", "Lencina", "mlencina@gmail.com", 1);
-        Student mockStudent2 = createStudentFrom("Fede", "Lencina", "flencina@gmail.com", 2);
-        StudentDTO mockStudentDTO = createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
-        StudentDTO mockStudentDTO2 = createStudentDTOFrom("Fede", "Lencina", "flencina@gmail.com", 2);
+        Student mockStudent = StudentTestUtils.createStudentFrom("Max", "Lencina", "mlencina@gmail.com", 1);
+        Student mockStudent2 = StudentTestUtils.createStudentFrom("Fede", "Lencina", "flencina@gmail.com", 2);
+        StudentDTO mockStudentDTO = StudentTestUtils.createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
+        StudentDTO mockStudentDTO2 = StudentTestUtils.createStudentDTOFrom("Fede", "Lencina", "flencina@gmail.com", 2);
 
         Mockito.when(this.studentDAO.findAll()).thenReturn(Arrays.asList(mockStudent, mockStudent2));
         Mockito.when(this.modelMapper.map(mockStudent, StudentDTO.class)).thenReturn(mockStudentDTO);
@@ -153,16 +152,12 @@ public class StudentServiceTest {
 
     @Test
     @DisplayName("Get Students By Name Containing 'Max' test")
-    @MockitoSettings(strictness = Strictness.LENIENT)
     void getStudentsByNameContainingMaxTest(){
-        Student mockStudent = createStudentFrom("Max", "Lencina", "mlencina@gmail.com", 1);
-        Student mockStudent2 = createStudentFrom("Fede", "Lencina", "flencina@gmail.com", 2);
-        StudentDTO mockStudentDTO = createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
-        StudentDTO mockStudentDTO2 = createStudentDTOFrom("Fede", "Lencina", "flencina@gmail.com", 2);
+        Student mockStudent = StudentTestUtils.createStudentFrom("Max", "Lencina", "mlencina@gmail.com", 1);
+        StudentDTO mockStudentDTO = StudentTestUtils.createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
 
         Mockito.when(this.studentDAO.findByFirstNameContainingOrLastNameContaining("Max" , "Max")).thenReturn(Collections.singletonList(mockStudent));
         Mockito.when(this.modelMapper.map(mockStudent, StudentDTO.class)).thenReturn(mockStudentDTO);
-        Mockito.when(this.modelMapper.map(mockStudent2, StudentDTO.class)).thenReturn(mockStudentDTO2);
 
         List<StudentDTO> studentDTOByNameMax = studentService.getStudents("Max");
 
@@ -174,16 +169,12 @@ public class StudentServiceTest {
 
     @Test
     @DisplayName("Get Students By Name Containing ' Max ' test")
-    @MockitoSettings(strictness = Strictness.LENIENT)
     void getStudentsByNameContainingMaxSpaceTest(){
-        Student mockStudent = createStudentFrom("Max", "Lencina", "mlencina@gmail.com", 1);
-        Student mockStudent2 = createStudentFrom("Fede", "Lencina", "flencina@gmail.com", 2);
-        StudentDTO mockStudentDTO = createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
-        StudentDTO mockStudentDTO2 = createStudentDTOFrom("Fede", "Lencina", "flencina@gmail.com", 2);
+        Student mockStudent = StudentTestUtils.createStudentFrom("Max", "Lencina", "mlencina@gmail.com", 1);
+        StudentDTO mockStudentDTO = StudentTestUtils.createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
 
         Mockito.when(this.studentDAO.findByFirstNameContainingOrLastNameContaining(" Max " , " Max ")).thenReturn(Collections.singletonList(mockStudent));
         Mockito.when(this.modelMapper.map(mockStudent, StudentDTO.class)).thenReturn(mockStudentDTO);
-        Mockito.when(this.modelMapper.map(mockStudent2, StudentDTO.class)).thenReturn(mockStudentDTO2);
 
         List<StudentDTO> studentDTOByNameMax = studentService.getStudents(" Max ");
 
@@ -196,12 +187,11 @@ public class StudentServiceTest {
 
     @Test
     @DisplayName("Get Students By Name Containing 'Lencina' test")
-    @MockitoSettings(strictness = Strictness.LENIENT)
     void getStudentsByNameContainingLencinaTest(){
-        Student mockStudent = createStudentFrom("Max", "Lencina", "mlencina@gmail.com", 1);
-        Student mockStudent2 = createStudentFrom("Fede", "Lencina", "flencina@gmail.com", 2);
-        StudentDTO mockStudentDTO = createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
-        StudentDTO mockStudentDTO2 = createStudentDTOFrom("Fede", "Lencina", "flencina@gmail.com", 2);
+        Student mockStudent = StudentTestUtils.createStudentFrom("Max", "Lencina", "mlencina@gmail.com", 1);
+        Student mockStudent2 = StudentTestUtils.createStudentFrom("Fede", "Lencina", "flencina@gmail.com", 2);
+        StudentDTO mockStudentDTO = StudentTestUtils.createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
+        StudentDTO mockStudentDTO2 = StudentTestUtils.createStudentDTOFrom("Fede", "Lencina", "flencina@gmail.com", 2);
 
         Mockito.when(this.studentDAO.findByFirstNameContainingOrLastNameContaining("Lencina" , "Lencina")).thenReturn(Arrays.asList(mockStudent, mockStudent2));
         Mockito.when(this.modelMapper.map(mockStudent, StudentDTO.class)).thenReturn(mockStudentDTO);
@@ -218,12 +208,11 @@ public class StudentServiceTest {
 
     @Test
     @DisplayName("Get Students By Name Containing ' Lencina ' test")
-    @MockitoSettings(strictness = Strictness.LENIENT)
     void getStudentsByNameContainingLencinaSpaceTest(){
-        Student mockStudent = createStudentFrom("Max", "Lencina", "mlencina@gmail.com", 1);
-        Student mockStudent2 = createStudentFrom("Fede", "Lencina", "flencina@gmail.com", 2);
-        StudentDTO mockStudentDTO = createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
-        StudentDTO mockStudentDTO2 = createStudentDTOFrom("Fede", "Lencina", "flencina@gmail.com", 2);
+        Student mockStudent = StudentTestUtils.createStudentFrom("Max", "Lencina", "mlencina@gmail.com", 1);
+        Student mockStudent2 = StudentTestUtils.createStudentFrom("Fede", "Lencina", "flencina@gmail.com", 2);
+        StudentDTO mockStudentDTO = StudentTestUtils.createStudentDTOFrom("Max", "Lencina", "mlencina@gmail.com", 1);
+        StudentDTO mockStudentDTO2 = StudentTestUtils.createStudentDTOFrom("Fede", "Lencina", "flencina@gmail.com", 2);
 
         Mockito.when(this.studentDAO.findByFirstNameContainingOrLastNameContaining("Lencina" , "Lencina")).thenReturn(Arrays.asList(mockStudent, mockStudent2));
         Mockito.when(this.modelMapper.map(mockStudent, StudentDTO.class)).thenReturn(mockStudentDTO);
@@ -237,28 +226,6 @@ public class StudentServiceTest {
                 () -> Assertions.assertEquals(studentDTOByNameMax.get(1), mockStudentDTO2)
         );
     }
-
-    private static Student createStudentFrom(String firstName, String lastName, String email, Integer studentId){
-        Student student = new Student();
-        student.setFirstName(firstName);
-        student.setLastName(lastName);
-        student.setEmail(email);
-        student.setId(studentId);
-        return student;
-    }
-
-    private static StudentDTO createStudentDTOFrom(String firstName, String lastName, String email, Integer studentId){
-        StudentDTO student = new StudentDTO();
-        student.setFirstName(firstName);
-        student.setLastName(lastName);
-        student.setEmail(email);
-        student.setId(studentId);
-        return student;
-    }
-
-
-
-
 
 
 }
