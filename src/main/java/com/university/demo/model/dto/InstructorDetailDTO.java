@@ -1,5 +1,6 @@
 package com.university.demo.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.university.demo.model.dto.base.BaseDTO;
 import com.university.demo.model.entity.Instructor;
 import lombok.EqualsAndHashCode;

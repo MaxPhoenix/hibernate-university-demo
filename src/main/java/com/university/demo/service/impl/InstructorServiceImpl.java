@@ -8,6 +8,8 @@ import com.university.demo.service.base.InstructorService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +44,9 @@ public class InstructorServiceImpl implements InstructorService {
 
     @Override
     public InstructorDTO addInstructor(InstructorDTO instructorDTO) {
+        if(instructorDTO.hasEmptyDetail())
+            instructorDTO.removeInstructorDetail();
+
         Instructor instructorToSave = modelMapper.map(instructorDTO, Instructor.class);
         Instructor savedInstructor = this.instructorDAO.save(instructorToSave);
         instructorDTO = modelMapper.map(savedInstructor, InstructorDTO.class);
@@ -50,6 +55,9 @@ public class InstructorServiceImpl implements InstructorService {
 
     @Override
     public InstructorDTO editInstructor(InstructorDTO instructorDTO) {
+        if(instructorDTO.hasEmptyDetail())
+            instructorDTO.removeInstructorDetail();
+
         Instructor instructorToSave = modelMapper.map(instructorDTO, Instructor.class);
         boolean exists = this.instructorDAO.existsById(instructorToSave.getId());
         if(exists) {
